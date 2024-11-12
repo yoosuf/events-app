@@ -21,28 +21,27 @@
         <span class="font-semibold">Location:</span> {{ event.is_online ? 'Online' : event.location }}
       </p>
       <p class="text-sm text-gray-500 mb-2">
-        <span class="font-semibold">Date:</span>
+        <span class="font-semibold">Date & Time:</span>
         <span>
-          {{ event.start_date ? formatDate(event.start_date) : 'Date not available' }}
-          <span v-if="event.end_date"> - {{ formatDate(event.end_date) }}</span>
+          {{ event.start_date ? formatDateTime(event.start_date) : 'Date not available' }}
+          <span v-if="event.end_date"> - {{ formatDateTime(event.end_date) }}</span>
         </span>
       </p>
     </div>
 
     <!-- Join Event Button -->
     <button
-      @click="handleJoinEvent"
+      @click="$emit('joinEvent')"
       class="mt-6 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition duration-200"
     >
       Join Event
     </button>
+
   </div>
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue'
-import { useEventStore } from '../../store/eventStore'
-import { useRouter } from 'vue-router'
+import { defineProps, defineEmits } from 'vue'
 
 interface TransformedEvent {
   id: number
@@ -50,41 +49,43 @@ interface TransformedEvent {
   description: string
   location: string
   is_online: boolean
-  start_date: Date | null
-  end_date: Date | null
+  start_date: Date | string | null
+  end_date: Date | string | null
   cover_image_url?: string
 }
 
 const props = defineProps<{ event: TransformedEvent }>()
-const store = useEventStore()
-const router = useRouter()
+const emit = defineEmits(['joinEvent'])
 
-// Function to handle joining the event
-const handleJoinEvent = async () => {
-  try {
-    await store.joinEvent(props.event.id) // Call joinEvent from the store
-    alert('Successfully joined the event!')
-  } catch (error) {
-    console.error('Error joining event:', error)
-    alert('Failed to join the event. Please try again.')
+// Utility function to format the date and time
+const formatDateTime = (date: Date | string): string => {
+  console.log('Original date value:', date); // Debugging
+
+  // Ensure the date is a Date object
+  const eventDate = typeof date === 'string' ? new Date(date) : date
+
+  // Check if the date is valid
+  if (eventDate instanceof Date && !isNaN(eventDate.getTime())) {
+    return eventDate.toLocaleString(undefined, {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true // Ensures time is displayed in 12-hour format with AM/PM
+    })
+  } else {
+    console.warn('Invalid date encountered:', date); // Debugging
+    return 'Date not available'
   }
-}
-
-// Utility function to format the date
-const formatDate = (date: Date): string => {
-  return date.toLocaleDateString(undefined, {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
 }
 
 // Utility function to format the URL
 const formatUrl = (url: string): string => {
   return url.startsWith('/') ? url.substring(1) : url
 }
+
+
 </script>
 
 <style scoped>

@@ -1,15 +1,18 @@
 <template>
   <div class="mb-4">
-      <label :for="id" class="block text-sm font-medium text-gray-700">{{ label }}</label>
-      <input
-          :id="id"
-          :type="type"
-          :placeholder="placeholder"
-          :class="['mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm', { 'border-red-500': error }]"
-          :value="modelValue"
-          @input="$emit('update:modelValue', $event.target.value)"
-      />
-      <p v-if="error" class="text-red-500 text-sm">{{ error }}</p>
+    <label :for="id" class="block text-sm font-medium text-gray-700">{{ label }}</label>
+    <input
+      :id="id"
+      :type="type"
+      :placeholder="placeholder"
+      :class="[
+        'block w-full rounded-md border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6',
+        { 'border-red-500': error }
+      ]"
+      :value="modelValue"
+      @input="onInput"
+    />
+    <p v-if="error" class="text-red-500 text-sm">{{ error }}</p>
   </div>
 </template>
 
@@ -26,6 +29,13 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['update:modelValue'])
+
+const onInput = (event: Event) => {
+  const target = event.target as HTMLInputElement | null
+  if (target) {
+    emit('update:modelValue', target.value)
+  }
+}
 </script>
 
 <style scoped>

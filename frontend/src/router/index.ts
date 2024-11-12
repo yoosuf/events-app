@@ -8,7 +8,7 @@ const EventDetailPage = () => import('../pages/Event/EventDetailPage.vue')
 const LoginPage = () => import('../pages/Auth/LoginPage.vue')
 const RegisterPage = () => import('../pages/Auth/RegisterPage.vue')
 const CategoryPage = () => import('../pages/Category/CategoryPage.vue')
-const ProfilePage = () => import('../components/Profile/ProfilePage.vue')
+const ProfilePage = () => import('../pages/Profile/ProfilePage.vue')
 const NotFoundPage = () => import('../pages/NotFoundPage.vue')
 
 const routes: Array<RouteRecordRaw> = [
